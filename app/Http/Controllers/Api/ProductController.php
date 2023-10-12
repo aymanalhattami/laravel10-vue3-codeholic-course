@@ -74,7 +74,7 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Product      $product
+     * @param \App\Models\Product $product
      * @return \Illuminate\Http\Response
      */
     public function update(ProductRequest $request, Product $product)
@@ -120,18 +120,18 @@ class ProductController extends Controller
      */
     private function saveImages($images, $positions, Product $product)
     {
-        foreach ($positions as $id => $position) {
-            ProductImage::query()
-                ->where('id', $id)
-                ->update(['position' => $position]);
-        }
+//        foreach ($positions as $id => $position) {
+//            ProductImage::query()
+//                ->where('id', $id)
+//                ->update(['position' => $position]);
+//        }
 
         foreach ($images as $id => $image) {
             $path = 'images/' . Str::random();
             if (!Storage::exists($path)) {
                 Storage::makeDirectory($path, 0755, true);
             }
-            $name = Str::random().'.'.$image->getClientOriginalExtension();
+            $name = Str::random() . '.' . $image->getClientOriginalExtension();
             if (!Storage::putFileAS('public/' . $path, $image, $name)) {
                 throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
             }

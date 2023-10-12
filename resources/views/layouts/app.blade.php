@@ -24,40 +24,77 @@
 
 <!-- Toast -->
 <div
-    x-data="toast"
+    x-data="{
+    visible: false,
+    delay: 5000,
+    percent: 0,
+    interval: null,
+    timeout: null,
+    message: null,
+    type: null,
+    close() {
+      this.visible = false;
+      clearInterval(this.interval);
+    },
+    show(message, type = 'success') {
+      this.visible = true;
+      this.message = message;
+      this.type = type;
+
+      if (this.interval) {
+        clearInterval(this.interval);
+        this.interval = null;
+      }
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+        this.timeout = null;
+      }
+
+      this.timeout = setTimeout(() => {
+        this.visible = false;
+        this.timeout = null;
+      }, this.delay);
+      const startDate = Date.now();
+      const futureDate = Date.now() + this.delay;
+      this.interval = setInterval(() => {
+        const date = Date.now();
+        this.percent = ((date - startDate) * 100) / (futureDate - startDate);
+        if (this.percent >= 100) {
+          clearInterval(this.interval);
+          this.interval = null;
+        }
+      }, 30);
+    },
+  }"
     x-show="visible"
     x-transition
     x-cloak
     @notify.window="show($event.detail.message, $event.detail.type || 'success')"
     class="fixed w-[400px] left-1/2 -ml-[200px] top-16 py-2 px-4 pb-4 text-white"
-    :class="type === 'success' ? 'bg-emerald-500' : 'bg-red-500'"
->
+    :class="type === 'success' ? 'bg-emerald-500' : 'bg-red-500'">
+
     <div class="font-semibold" x-text="message"></div>
     <button
         @click="close"
-        class="absolute flex items-center justify-center right-2 top-2 w-[30px] h-[30px] rounded-full hover:bg-black/10 transition-colors"
-    >
+        class="absolute flex items-center justify-center right-2 top-2 w-[30px] h-[30px] rounded-full hover:bg-black/10 transition-colors">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            stroke-width="2"
-        >
+            stroke-width="2">
             <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-            />
+                d="M6 18L18 6M6 6l12 12"/>
         </svg>
     </button>
     <!-- Progress -->
     <div>
         <div
             class="absolute left-0 bottom-0 right-0 h-[6px] bg-black/10"
-            :style="{'width': `${percent}%`}"
-        ></div>
+            :style="{'width': `${percent}%`}"></div>
     </div>
 </div>
 <!--/ Toast -->

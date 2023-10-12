@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CheckoutController extends Controller
@@ -43,9 +44,9 @@ class CheckoutController extends Controller
             $quantity = $cartItems[$product->id]['quantity'];
             if ($product->quantity !== null && $product->quantity < $quantity) {
                 $message = match ($product->quantity) {
-                    0 => 'The product "'.$product->title.'" is out of stock',
-                    1 => 'There is only one item left for product "'.$product->title,
-                    default => 'There are only ' . $product->quantity . ' items left for product "'.$product->title,
+                    0 => 'The product "' . $product->title . '" is out of stock',
+                    1 => 'There is only one item left for product "' . $product->title,
+                    default => 'There are only ' . $product->quantity . ' items left for product "' . $product->title,
                 };
                 return redirect()->back()->with('error', $message);
             }
@@ -120,7 +121,7 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::critical(__METHOD__ . ' method does not work. '. $e->getMessage());
+            Log::critical(__METHOD__ . ' method does not work. ' . $e->getMessage());
             throw $e;
         }
 
@@ -256,7 +257,7 @@ class CheckoutController extends Controller
             $order->update();
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::critical(__METHOD__ . ' method does not work. '. $e->getMessage());
+            Log::critical(__METHOD__ . ' method does not work. ' . $e->getMessage());
             throw $e;
         }
 
@@ -269,7 +270,7 @@ class CheckoutController extends Controller
                 Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
             }
         } catch (\Exception $e) {
-            Log::critical('Email sending does not work. '. $e->getMessage());
+            Log::critical('Email sending does not work. ' . $e->getMessage());
         }
     }
 }

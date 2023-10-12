@@ -62,7 +62,7 @@ class RegisteredUserController extends Controller
             Auth::login($user);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withInput()->with('error', 'Unable to register right now.');
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
 
         DB::commit();

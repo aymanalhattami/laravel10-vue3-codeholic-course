@@ -1,7 +1,7 @@
 <template>
   <div v-if="currentUser.id" class="min-h-full bg-gray-200 flex">
     <!--    Sidebar-->
-    <Sidebar :class="{'-ml-[200px]': !sidebarOpened}"/>
+    <Sidebar v-if="sidebarOpened"/>
     <!--/    Sidebar-->
 
     <div class="flex-1">
@@ -14,9 +14,9 @@
     </div>
   </div>
   <div v-else class="min-h-full bg-gray-200 flex items-center justify-center">
-    <Spinner />
+    <Spinner/>
   </div>
-  <Toast />
+  <Toast/>
 </template>
 
 <script setup>
